@@ -65,16 +65,16 @@ resource "aws_security_group" "project_securitygroup" {
   }
 }
 
-resource "tls_private_key" "web_key" {
+resource "tls_private_key" "tomcat" {
   algorithm = "RSA"
 }
 
-resource "aws_key_pair" "app_key" {
+resource "aws_key_pair" "tomcat" {
   key_name   = "tomcat"
   public_key = tls_private_key.tomcat.public_key_openssh
 }
 
-resource "local_file" "web_key" {
+resource "local_file" "tomcat" {
   content  = tls_private_key.tomcat.private_key_pem
   filename = "tomcat.pem"
 
