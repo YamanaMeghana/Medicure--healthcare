@@ -70,13 +70,13 @@ resource "tls_private_key" "web_key" {
 }
 
 resource "aws_key_pair" "app_key" {
-  key_name   = "web-key"
-  public_key = tls_private_key.web_key.public_key_openssh
+  key_name   = "tomcat"
+  public_key = tls_private_key.tomcat.public_key_openssh
 }
 
 resource "local_file" "web_key" {
-  content  = tls_private_key.web_key.private_key_pem
-  filename = "web-key.pem"
+  content  = tls_private_key.tomcat.private_key_pem
+  filename = "tomcat.pem"
 
   provisioner "local-exec" {
     command = "chmod 600 ${self.filename}"
@@ -85,10 +85,10 @@ resource "local_file" "web_key" {
 }
 
 resource "aws_instance" "kubernetes_master" {
-  ami             = "ami-04b70fa74e45c3917"
+  ami             = "ami-0bb84b8ffd87024d8"
   instance_type   = "t2.micro"
   subnet_id       = aws_subnet.subnet_1.id
-  key_name        = "web-key"
+  key_name        = "tomcat"
   security_groups = [aws_security_group.project_securitygroup.id]
   tags = {
     Name = "Kubernetes-Master"
@@ -100,7 +100,7 @@ resource "aws_instance" "kubernetes_master" {
   connection {
     type        = "ssh"
     user        = "ubuntu"
-    private_key = tls_private_key.web_key.private_key_pem
+    private_key = tls_private_key.tomcat.private_key_pem
     host        = self.public_ip
   }
    provisioner "local-exec" {
@@ -113,10 +113,10 @@ resource "aws_instance" "kubernetes_master" {
 }
 
 resource "aws_instance" "kubernetes_worker_1" {
-  ami             = "ami-04b70fa74e45c3917"
+  ami             = "ami-0bb84b8ffd87024d8"
   instance_type   = "t2.micro"
   subnet_id       = aws_subnet.subnet_1.id
-  key_name        = "web-key"
+  key_name        = "tomcat"
   security_groups = [aws_security_group.project_securitygroup.id]
   tags = {
     Name = "Kubernetes-Worker-1"
@@ -128,7 +128,7 @@ resource "aws_instance" "kubernetes_worker_1" {
   connection {
     type        = "ssh"
     user        = "ubuntu"
-    private_key = tls_private_key.web_key.private_key_pem
+    private_key = tls_private_key.tomcat.private_key_pem
     host        = self.public_ip
   }
    provisioner "local-exec" {
@@ -141,10 +141,10 @@ resource "aws_instance" "kubernetes_worker_1" {
 }
 
 resource "aws_instance" "kubernetes_worker_2" {
-  ami             = "ami-04b70fa74e45c3917"
+  ami             = "ami-0bb84b8ffd87024d8"
   instance_type   = "t2.micro"
   subnet_id       = aws_subnet.subnet_1.id
-  key_name        = "web-key"
+  key_name        = "tomcat"
   security_groups = [aws_security_group.project_securitygroup.id]
   tags = {
     Name = "Kubernetes-Worker-2"
@@ -156,7 +156,7 @@ resource "aws_instance" "kubernetes_worker_2" {
   connection {
     type        = "ssh"
     user        = "ubuntu"
-    private_key = tls_private_key.web_key.private_key_pem
+    private_key = tls_private_key.tomcat.private_key_pem
     host        = self.public_ip
   }
    provisioner "local-exec" {
@@ -185,10 +185,10 @@ resource "null_resource" "local_command" {
 
 }
 resource "aws_instance" "monitoring_server" {
-  ami             = "ami-04b70fa74e45c3917"
+  ami             = "ami-0bb84b8ffd87024d8"
   instance_type   = "t2.micro"
   subnet_id       = aws_subnet.subnet_1.id
-  key_name        = "web-key"
+  key_name        = "tomcat"
   security_groups = [aws_security_group.project_securitygroup.id]
   tags = {
     Name = "Monitoring-Server"
@@ -200,7 +200,7 @@ resource "aws_instance" "monitoring_server" {
   connection {
     type        = "ssh"
     user        = "ubuntu"
-    private_key = tls_private_key.web_key.private_key_pem
+    private_key = tls_private_key.tomcat.private_key_pem
     host        = self.public_ip
   }
    provisioner "local-exec" {
